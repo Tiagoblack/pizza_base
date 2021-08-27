@@ -1,5 +1,5 @@
 const c = el => document.querySelector(el);
-const cl = el => document.querySelectorAll(el);
+const cs = el => document.querySelectorAll(el);
 
 
 pizzaJson.map(({ img, name, price, description }, index) => {
@@ -19,19 +19,22 @@ pizzaJson.map(({ img, name, price, description }, index) => {
         c('.pizzaWindowArea').style.display = 'flex';
         //fazendo um intervalo no modal com javascript 
         setTimeout(() => c('.pizzaWindowArea').style.opacity = 1, 200);
+        console.log(pizzaJson[key]);
 
         // colocando as informações no modal
         c('.pizzaBig  img').src = pizzaJson[key].img;
         c('.pizzaInfo h1').innerHTML = pizzaJson[key].name;
         c('.pizzaInfo--desc').innerHTML = pizzaJson[key].description;
-        c('.pizzaInfo--actualPrice"').innerHTML = `R$ ${pizzaJson[key].price.toFixed(2).replace(".", ",")}`;
-        cs()
+        cs('.pizzaInfo--size').forEach((size, sizeIndex) => {
+            size.querySelector('span').innerHTML = pizzaJson[key].sizes[sizeIndex];
+        });
+        c('.pizzaInfo--actualPrice').innerHTML = `R$ ${pizzaJson[key].price.toFixed(2).replace(".", ",")}`;
 
     })
 
 
 
-    c('.pizza-area').append(pizzaItem);
     // colocando as pizza em pizza-area
+    c('.pizza-area').append(pizzaItem);
 
 });
