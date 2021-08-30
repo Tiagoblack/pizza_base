@@ -1,10 +1,10 @@
 const c = el => document.querySelector(el);
 const cs = el => document.querySelectorAll(el);
-let contQd = 0;
+let contQd = 1;
 let quant;
 let modalKey;
 cart = [];
-let quantArray
+var quantArray;
 
 
 
@@ -42,7 +42,7 @@ pizzaJson.map(({ img, name, price, description }, index) => {
         cs('.pizzaInfo--size').forEach((size, sizeIndex) => {
             if (sizeIndex === 2) size.classList.add('selected');
             size.querySelector('span').innerHTML = pizzaJson[key].sizes[sizeIndex];
-            let quantArray = c('.pizzaInfo--actualPrice').innerHTML = `R$ ${pizzaJson[key].price[2].toFixed(2).replace(".", ",")}`;
+            var quantArray = c('.pizzaInfo--actualPrice').innerHTML = `R$ ${pizzaJson[key].price[2].toFixed(2).replace(".", ",")}`;
             c('.pizzaInfo--qt').innerHTML = contQd;
             // alterar os preços do modal conforme o tamanho da pizza
             size.addEventListener('click', () => {
@@ -91,51 +91,79 @@ cs('.pizzaInfo--cancelButton, .pizzaInfo--cancelMobileButton').forEach(el => {
 
 quantValueNext = () => {
     contQd++
-    parseInt(valueEnd = contQd * quant);
+    let valueEnd = contQd * quant
+    parseInt(valueEnd);
     console.log(contQd);
+    console.log(valueEnd);
 
-    if (typeof(quant) === 'undefined') {
-        //  quantArray ;
-        c('.pizzaInfo--qt').innerHTML = contQd;
-        c('.pizzaInfo--actualPrice').innerHTML = `R$ ${quantArray.toFixed(2).replace('.', ',')}`;
+    //  quantArray ;
+    c('.pizzaInfo--qt').innerHTML = contQd;
+    c('.pizzaInfo--actualPrice').innerHTML = `R$ ${valueEnd.toFixed(2).replace('.', ',')}`;
 
-    } else {
-        console.log(quant);
-        c('.pizzaInfo--qt').innerHTML = contQd;
-        c('.pizzaInfo--actualPrice').innerHTML = `R$ ${valueEnd.toFixed(2).replace('.', ',')}`;
-    }
 
 
 }
-
-
-
 quantValuePre = () => {
-
-    let ElementDoomMenos = c('.pizzaInfo--qt');
-    let qtDencremet = contQd--
-        parseInt(subValue = qtDencremet * quant);
-
-    if (qtDencremet < 1) {
-        ElementDoomMenos.innerHTML = qtDencremet++;
+    var ElementDoomMenos = c('.pizzaInfo--qt');
+    if (contQd > 1) {
+        contQd--;
+        // var subValue = contQd * quant
+        //parseInt(subValue);
+        ElementDoomMenos.innerHTML = contQd;
+        //c('.pizzaInfo--actualPrice').innerHTML = `R$ ${subValue.toFixed(2)}`;
     }
-    ElementDoomMenos.innerHTML = qtDencremet--;
-    c('.pizzaInfo--actualPrice').innerHTML = `R$ ${subValue.toFixed(2)}`;
-
 }
 
 c('.pizzaInfo--qtmais').addEventListener('click', quantValueNext);
 c('.pizzaInfo--qtmenos').addEventListener('click', quantValuePre);
 //Abrir carrinho
-
 c('.pizzaInfo--addButton').addEventListener('click', () => {
 
     let size = c('.pizzaInfo--size.selected').getAttribute('data-key');
-    cart.push({
-        id: pizzaJson[modalKey].id,
-        size,
-        qt: contQd
-    })
+    let identifier = pizzaJson[modalKey].id + '@' + size;
+    let key = cart.findIndex(item => item.identifier == identifier);
+    if (key > -1) {
+        cart[key].qt += contQd;
+    } else {
+        cart.push({
+            identifier,
+            id: pizzaJson[modalKey].id,
+            size,
+            qt: contQd
+        })
+
+    }
+
     console.log(cart);
     closeModal();
-})
+    updateCart()
+});
+
+
+
+const updateCart = () => {
+
+    if (cart.length > 0) {
+        c('aside').classList.add('show');
+        c('.cart').innerHTML = '';
+
+        for (let i in cart) {
+            let pizzaItem = pizzaJson.find(item => item.id === cart[i].id);
+            let cartItem = c('.models .cart--item').cloneNode(true);
+
+            cartItem.querySelector('img').src = pizzaItem.img;
+
+
+
+            c('.cart').append(cartItem);
+        }
+
+
+
+
+    } else {
+        c('aside').classList.remove('show');
+
+    }
+
+}
